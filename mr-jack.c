@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "map.h"
 
-#include <SDL2.dll>
 
+int main(){
+    
+    return 0;
+}
