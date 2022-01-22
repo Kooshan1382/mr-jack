@@ -86,10 +86,10 @@ void DisplayMap(char *hexagonal, struct tile **map, int x, int y)
         }
         else if (hexagonal[i] == 't')
         {
-            if(map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type==0){
+            if(map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type==1){
                 printf("  ");
             }
-            else if(map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type==1){
+            else if(map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type==0){
                 printf("##");
             }
             else{
