@@ -1,4 +1,4 @@
-#include "move.h"
+#include "characters.h"
 
 int main()
 {
@@ -12,10 +12,10 @@ int main()
     struct tile** matrix =LoadMap(base, x, y);
     char *hexagonal = CreateMap(map);
     DisplayMap(hexagonal, matrix , x, y);
-    move_player("MS",matrix,x,y);
+    JB(matrix,x,y);
     system("cls");
     DisplayMap(hexagonal, matrix , x, y);
-    fclose(map);
+    fclose(map);    
     fclose(base);
 
 }

@@ -27,10 +27,10 @@ char *CreateMap(FILE *map)
 struct tile **LoadMap(FILE *base, int x, int y)
 {
     struct tile **matrix;
-    matrix = malloc((y + 2) * sizeof(struct tile *));
+    matrix = (struct tile**) malloc((y + 2) * sizeof(struct tile *));
     for (int i = 0; i < y + 2; i++)
     {
-        matrix[i] = malloc((x + 2) * sizeof(struct tile));
+        matrix[i] = (struct tile *) malloc((x + 2) * sizeof(struct tile));
     }
     for (int i = 0; i < y + 2; i++)
     {
