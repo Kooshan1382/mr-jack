@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+struct Escape{
+    char place[10];
+    char gate1[10];
+    char gate2[10];
+    int mode;
+};
 struct tile
 {
     char character[10];
@@ -105,3 +111,10 @@ void DisplayMap(char *hexagonal, struct tile **map, int x, int y)
         }
     }
 }
+struct Escape* Load_Escape(FILE * base){
+    struct Escape * Gates = (struct Escape *) malloc(4*sizeof(struct Escape));
+    for(int i=0;i<4;i++){
+        fscanf(base, "%s %d %s %s", &Gates[i].place,&Gates[i].mode,&Gates[i].gate1,&Gates[i].gate2);
+    }
+    return Gates;
+};

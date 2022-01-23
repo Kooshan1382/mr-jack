@@ -12,7 +12,8 @@ int main()
     struct tile** matrix =LoadMap(base, x, y);
     char *hexagonal = CreateMap(map);
     DisplayMap(hexagonal, matrix , x, y);
-    JB(matrix,x,y);
+    struct Escape * Gates = Load_Escape(base);
+    IL(matrix,x,y,Gates);
     system("cls");
     DisplayMap(hexagonal, matrix , x, y);
     fclose(map);    

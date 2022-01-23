@@ -323,7 +323,7 @@ void move_player(char name[], struct tile **matrix, int x, int y)
     }
     struct change_place *head_change, *current_change;
     head_change = current_change = (struct change_place *)malloc(sizeof(struct change_place));
-    current_change->next =NULL;
+    current_change->next = NULL;
     for (int i = 0; i < n; i++)
     {
         if (i == n - 1)
@@ -381,19 +381,20 @@ void move_player(char name[], struct tile **matrix, int x, int y)
 
                 if (strcmp(matrix[(int)(y_index)-64][x_index].character, "NA") != 0)
                 {
-                    strcpy(current_change->name,matrix[(int)(y_index)-64][x_index].character);
+                    strcpy(current_change->name, matrix[(int)(y_index)-64][x_index].character);
                     current_change->x = x_index;
-                    current_change ->y = (int)(y_index)-64;
-                    current_change ->next = (struct change_place *)malloc(sizeof(struct change_place));
-                    current_change = current_change ->next;
+                    current_change->y = (int)(y_index)-64;
+                    current_change->next = (struct change_place *)malloc(sizeof(struct change_place));
+                    current_change = current_change->next;
                 }
                 strcpy(matrix[(int)(y_index)-64][x_index].character, name);
                 strcpy(matrix[yrecord][xrecord].character, "NA");
             }
         }
     }
-    while(head_change ->next !=NULL){
+    while (head_change->next != NULL)
+    {
         strcpy(matrix[head_change->y][head_change->x].character, head_change->name);
-        head_change = head_change ->next;
+        head_change = head_change->next;
     }
 }
