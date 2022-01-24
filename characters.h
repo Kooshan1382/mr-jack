@@ -50,7 +50,7 @@ void SH(struct tile **matrix, int x, int y, char mrjack[10])
 
 void JB(struct tile **matrix, int x, int y)
 {
-    printf("\nwhich to do first special or move? \n");
+    printf("which to do first special or move? \n");
     char input[10];
     scanf("%s", input);
     if (strcmp(input, "special") == 0)
@@ -66,7 +66,7 @@ void JB(struct tile **matrix, int x, int y)
 }
 void JS(struct tile **matrix, int x, int y)
 {
-    printf("\nwhich to do first special or move? \n");
+    printf("which to do first special or move? \n");
     char input[10];
     scanf("%s", input);
     if (strcmp(input, "special") == 0)
@@ -82,7 +82,7 @@ void JS(struct tile **matrix, int x, int y)
 }
 void WG(struct tile **matrix, int x, int y)
 {
-    printf("\nwhich to do special or move? \n");
+    printf("which to do special or move? \n");
     char input[10];
     scanf("%s", input);
     if (strcmp(input, "special") == 0)
@@ -100,7 +100,7 @@ void MS(struct tile **matrix, int x, int y)
 }
 void IL(struct tile **matrix, int x, int y, struct Escape *Gates)
 {
-    printf("\nwhich to do first special or move? \n");
+    printf("which to do first special or move? \n");
     char input[10];
     scanf("%s", input);
     if (strcmp(input, "special") == 0)
@@ -118,4 +118,21 @@ void JW(struct tile **matrix, int x, int y)
 {
     move_player("JW", matrix, x, y);
     special_JW(matrix, x, y);
+}
+void SG(struct tile **matrix, int x, int y)
+{
+
+    printf("which to do special or move? \n");
+    char input[10];
+    scanf("%s", input);
+    if (strcmp(input, "special") == 0)
+    {
+        special_SG(matrix, x, y);
+        move_player("SG", matrix, x, y);
+    }
+    else
+    {
+        special_SG(matrix, x, y);
+        move_player("SG", matrix, x, y);
+    }
 }

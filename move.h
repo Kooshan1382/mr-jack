@@ -398,3 +398,101 @@ void move_player(char name[], struct tile **matrix, int x, int y)
         head_change = head_change->next;
     }
 }
+void move_player_SG(char name[], struct tile **matrix, int x, int y, int n, int x_SG, int y_SG)
+{
+    int xplayer, yplayer;
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            if (strcmp(matrix[i][j].character, name) == 0)
+            {
+                yplayer = i;
+                xplayer = j;
+            }
+        }
+    }
+    int status = 0;
+
+    int flag = 1;
+    struct change_place *head_change, *current_change;
+    head_change = current_change = (struct change_place *)malloc(sizeof(struct change_place));
+    current_change->next = NULL;
+    for (int i = 0; i < n; i++)
+    {
+        if (i == n - 1)
+        {
+            status = 1;
+        }
+        struct position *posibble = possible_moves(name, matrix, x, y, status);
+        struct position *current;
+        int flag = 1;
+        char input[10];
+        while (flag == 1)
+        {
+            char y_index;
+            int x_index;
+            current = posibble;
+            printf("possible step(s) are : ");
+            while (current->next != NULL)
+            {
+                if (abs(((int)current->y) - 64 - y_SG) + abs(current->x - x_SG) <= abs(yplayer - y_SG) + abs(xplayer - x_SG))
+                {
+                    printf("%c%d ", current->y, current->x);
+                }
+
+                current = current->next;
+            }
+            printf("\nwhere would you like to go? ");
+            scanf("%s", input);
+            y_index = input[0];
+            x_index = atoi(input + 1);
+            current = posibble;
+            while (current->next != NULL)
+            {
+                if (y_index == current->y && x_index == current->x && abs(((int)current->y) - 64 - y_SG) + abs(current->x - x_SG) <= abs(yplayer - y_SG) + abs(xplayer - x_SG))
+                {
+                    flag = 0;
+                    break;
+                }
+                current = current->next;
+            }
+            if (flag == 1)
+            {
+                printf("wrong step!\n");
+            }
+            else
+            {
+                int xrecord, yrecord;
+
+                for (int i = 0; i < y + 2; i++)
+                {
+                    for (int j = 0; j < x + 2; j++)
+                    {
+                        if (strcmp(matrix[i][j].character, name) == 0)
+                        {
+                            yrecord = i;
+                            xrecord = j;
+                        }
+                    }
+                }
+
+                if (strcmp(matrix[(int)(y_index)-64][x_index].character, "NA") != 0)
+                {
+                    strcpy(current_change->name, matrix[(int)(y_index)-64][x_index].character);
+                    current_change->x = x_index;
+                    current_change->y = (int)(y_index)-64;
+                    current_change->next = (struct change_place *)malloc(sizeof(struct change_place));
+                    current_change = current_change->next;
+                }
+                strcpy(matrix[(int)(y_index)-64][x_index].character, name);
+                strcpy(matrix[yrecord][xrecord].character, "NA");
+            }
+        }
+    }
+    while (head_change->next != NULL)
+    {
+        strcpy(matrix[head_change->y][head_change->x].character, head_change->name);
+        head_change = head_change->next;
+    }
+}

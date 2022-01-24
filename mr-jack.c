@@ -12,7 +12,7 @@ void PLAY(char character[], struct tile **matrix, int x, int y, struct Escape *G
     }
     if (strcmp(character, "SG") == 0)
     {
-        //SG(matrix,x,y);
+        SG(matrix,x,y);
     }
     if (strcmp(character, "MS") == 0)
     {
@@ -161,7 +161,6 @@ int main()
                         strcpy(current->card, "\0");
                         PLAY(character, matrix, x, y, Gates, mrjack);
                         check_Visibility(matrix, x, y);
-                        printf("status is %d\n",if_visible(matrix,x,y,mrjack));
                         inocent_List(matrix, x, y, mrjack);
                         //system("cls");
                         DisplayMap(hexagonal, matrix, x, y);
@@ -179,5 +178,5 @@ int main()
     }
 
     fclose(map);
-    fclose(base);
+    fclose(base); 
 }

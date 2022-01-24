@@ -221,33 +221,35 @@ void special_IL(struct tile **matrix, int x, int y, struct Escape *Gates)
     matrix[(int)(Gates[store].gate1)[0] - 64][atoi(Gates[store].gate1 + 1)].type = 1;
     matrix[(int)(Gates[store].gate2)[0] - 64][atoi(Gates[store].gate2 + 1)].type = 1;
 }
-void make_visible(struct tile **matrix, int xrecord, int yrecord, int x, int y, char input[])
+void make_visible(struct tile **matrix, int xrecord, int yrecord, int x, int y, char input[x])
 {
     if (xrecord == 0 || xrecord == x + 1 || yrecord == 0 || yrecord == y + 1)
     {
     }
     else
     {
-
+        matrix[yrecord][xrecord].visibility = 1;
         if (strcmp(input, "N") == 0)
         {
             strcpy(JW_direction, "N");
-            make_visible(matrix,xrecord,yrecord-1,x,y,"N");
+            make_visible(matrix, xrecord, yrecord - 1, x, y, "N");
         }
         else if (strcmp(input, "S") == 0)
         {
             strcpy(JW_direction, "S");
-            make_visible(matrix,xrecord,yrecord+1,x,y,"S");
+            make_visible(matrix, xrecord, yrecord + 1, x, y, "S");
         }
         else if (strcmp(input, "NE") == 0)
         {
+
             strcpy(JW_direction, "NE");
             if (xrecord % 2 == 0)
             {
-                make_visible(matrix,xrecord+1,yrecord-1,x,y,"NE");
+                make_visible(matrix, xrecord + 1, yrecord - 1, x, y, "NE");
             }
-            else{
-                make_visible(matrix,xrecord+1,yrecord,x,y,"NE");
+            else
+            {
+                make_visible(matrix, xrecord + 1, yrecord, x, y, "NE");
             }
         }
         else if (strcmp(input, "NW") == 0)
@@ -255,10 +257,11 @@ void make_visible(struct tile **matrix, int xrecord, int yrecord, int x, int y, 
             strcpy(JW_direction, "NW");
             if (xrecord % 2 == 0)
             {
-                make_visible(matrix,xrecord-1,yrecord-1,x,y,"NW");
+                make_visible(matrix, xrecord - 1, yrecord - 1, x, y, "NW");
             }
-            else{
-                make_visible(matrix,xrecord-1,yrecord,x,y,"NW");
+            else
+            {
+                make_visible(matrix, xrecord - 1, yrecord, x, y, "NW");
             }
         }
         else if (strcmp(input, "SE") == 0)
@@ -266,10 +269,11 @@ void make_visible(struct tile **matrix, int xrecord, int yrecord, int x, int y, 
             strcpy(JW_direction, "SE");
             if (xrecord % 2 == 0)
             {
-                make_visible(matrix,xrecord+1,yrecord,x,y,"SE");
+                make_visible(matrix, xrecord + 1, yrecord, x, y, "SE");
             }
-            else{
-                make_visible(matrix,xrecord+1,yrecord+1,x,y,"SE");
+            else
+            {
+                make_visible(matrix, xrecord + 1, yrecord + 1, x, y, "SE");
             }
         }
         else if (strcmp(input, "SW") == 0)
@@ -277,10 +281,11 @@ void make_visible(struct tile **matrix, int xrecord, int yrecord, int x, int y, 
             strcpy(JW_direction, "SW");
             if (xrecord % 2 == 0)
             {
-                make_visible(matrix,xrecord-1,yrecord,x,y,"SW");
+                make_visible(matrix, xrecord - 1, yrecord, x, y, "SW");
             }
-            else{
-                make_visible(matrix,xrecord-1,yrecord+1,x,y,"SW");
+            else
+            {
+                make_visible(matrix, xrecord - 1, yrecord + 1, x, y, "SW");
             }
         }
     }
@@ -303,16 +308,63 @@ void special_JW(struct tile **matrix, int x, int y)
     }
     while (flag == 1)
     {
-        printf("What is JW's direction?\n N NW NE S SW SE\n");
+        printf("What is JW's direction?\nN NW NE S SW SE\n");
         scanf("%s", input);
         if (strcmp(input, "N") == 0 || strcmp(input, "NE") == 0 || strcmp(input, "NW") == 0 || strcmp(input, "S") == 0 || strcmp(input, "SW") == 0 || strcmp(input, "SE") == 0)
         {
             flag = 0;
-            make_visible(matrix,xrecord,yrecord,x,y,input);
+            make_visible(matrix, xrecord, yrecord, x, y, input);
+            matrix[yrecord][xrecord].visibility = 0;
         }
         else
         {
             printf("Wrong input!\n");
+        }
+    }
+}
+void special_SG(struct tile **matrix, int x, int y)
+{
+    int xrecord, yrecord;
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            if (strcmp(matrix[i][j].character, "SG") == 0)
+            {
+                yrecord = i;
+                xrecord = j;
+            }
+        }
+    }
+    char input[10];
+    int move_counter;
+    for (int i = 0; i < 3; i++)
+    {
+        int flag = 1;
+        while (flag == 1)
+        {
+            printf("who would you like to move closer? ");
+            scanf("%s", input);
+            for (int j = 0; j < 8; j++)
+            {
+                if (strcmp(input, CARDS[j]) == 0 && strcmp(input, "SG") != 0)
+                {
+                    flag = 0;
+                }
+            }
+            if (flag == 0)
+            {
+                printf("how many moves would you like to move? ");
+                scanf("%d", &move_counter);
+                for(int k=0;k<move_counter;k++){
+                    move_player_SG(input,matrix,x,y,move_counter,xrecord,yrecord);
+                }
+                i = i + move_counter - 1;
+            }
+            else
+            {
+                printf("Wrong Input!\n");
+            }
         }
     }
 }
