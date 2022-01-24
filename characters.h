@@ -62,3 +62,7 @@ void IL(struct tile **matrix, int x, int y,struct Escape * Gates)
         special_IL(matrix,x,y,Gates);
     }
 }
+void JW (struct tile **matrix, int x, int y){
+    move_player("JW", matrix, x, y);
+    
+}

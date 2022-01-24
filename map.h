@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-struct Escape{
+#include <time.h>
+
+struct Escape
+{
     char place[10];
     char gate1[10];
     char gate2[10];
@@ -11,6 +14,7 @@ struct tile
 {
     char character[10];
     int type;
+    int visibility;
 };
 char *CreateMap(FILE *map)
 {
@@ -33,11 +37,12 @@ char *CreateMap(FILE *map)
 struct tile **LoadMap(FILE *base, int x, int y)
 {
     struct tile **matrix;
-    matrix = (struct tile**) malloc((y + 2) * sizeof(struct tile *));
+    matrix = (struct tile **)malloc((y + 2) * sizeof(struct tile *));
     for (int i = 0; i < y + 2; i++)
     {
-        matrix[i] = (struct tile *) malloc((x + 2) * sizeof(struct tile));
+        matrix[i] = (struct tile *)malloc((x + 2) * sizeof(struct tile));
     }
+
     for (int i = 0; i < y + 2; i++)
     {
         for (int j = 0; j < x + 2; j++)
@@ -68,6 +73,20 @@ struct tile **LoadMap(FILE *base, int x, int y)
             }
         }
     }
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            if (i == 0 || i == y + 1 || j == 0 || j == x + 1)
+            {
+                matrix[i][j].visibility = 0;
+            }
+            else
+            {
+                fscanf(base, "%d", &matrix[i][j].visibility);
+            }
+        }
+    }
     return matrix;
 }
 void DisplayMap(char *hexagonal, struct tile **map, int x, int y)
@@ -76,7 +95,7 @@ void DisplayMap(char *hexagonal, struct tile **map, int x, int y)
     int type_count = 0;
     for (int i = 0; i < strlen(hexagonal); i++)
     {
-        if (hexagonal[i] == 'c' && hexagonal[i+1] == 'h')
+        if (hexagonal[i] == 'c' && hexagonal[i + 1] == 'h')
         {
             if (strcmp(map[char_count / (2 * 13) + 1][(char_count + 1) % 13 + 1].character, "NA") == 0)
             {
@@ -92,16 +111,19 @@ void DisplayMap(char *hexagonal, struct tile **map, int x, int y)
         }
         else if (hexagonal[i] == 't')
         {
-            if(map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type==1){
+            if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 1)
+            {
                 printf("  ");
             }
-            else if(map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type==0){
+            else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 0)
+            {
                 printf("##");
             }
-            else{
+            else
+            {
                 printf("%d ", map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type);
             }
-            
+
             type_count += 2;
             i++;
         }
@@ -111,10 +133,12 @@ void DisplayMap(char *hexagonal, struct tile **map, int x, int y)
         }
     }
 }
-struct Escape* Load_Escape(FILE * base){
-    struct Escape * Gates = (struct Escape *) malloc(4*sizeof(struct Escape));
-    for(int i=0;i<4;i++){
-        fscanf(base, "%s %d %s %s", &Gates[i].place,&Gates[i].mode,&Gates[i].gate1,&Gates[i].gate2);
+struct Escape *Load_Escape(FILE *base)
+{
+    struct Escape *Gates = (struct Escape *)malloc(4 * sizeof(struct Escape));
+    for (int i = 0; i < 4; i++)
+    {
+        fscanf(base, "%s %d %s %s", &Gates[i].place, &Gates[i].mode, &Gates[i].gate1, &Gates[i].gate2);
     }
     return Gates;
 };

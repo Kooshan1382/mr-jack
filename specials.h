@@ -1,5 +1,7 @@
 #include "move.h"
 
+char JW_direction[5];
+
 void special_JB(struct tile **matrix, int x, int y)
 {
     int flag = 1;
@@ -207,8 +209,8 @@ void special_IL(struct tile **matrix, int x, int y, struct Escape *Gates)
             if (strcmp(input, Gates[i].place) == 0 && Gates[i].mode == 1)
             {
                 flag = 0;
-                matrix[(int)(Gates[i].gate1)[0]-64][atoi(Gates[i].gate1 + 1)].type = 0;
-                matrix[(int)(Gates[i].gate2)[0]-64][atoi(Gates[i].gate2 + 1)].type = 0;
+                matrix[(int)(Gates[i].gate1)[0] - 64][atoi(Gates[i].gate1 + 1)].type = 0;
+                matrix[(int)(Gates[i].gate2)[0] - 64][atoi(Gates[i].gate2 + 1)].type = 0;
             }
         }
         if (flag == 1)
@@ -216,6 +218,80 @@ void special_IL(struct tile **matrix, int x, int y, struct Escape *Gates)
             printf("Wrong input!");
         }
     }
-    matrix[(int)(Gates[store].gate1)[0]-64][atoi(Gates[store].gate1 + 1)].type = 1;
-    matrix[(int)(Gates[store].gate2)[0]-64][atoi(Gates[store].gate2 + 1)].type = 1;
+    matrix[(int)(Gates[store].gate1)[0] - 64][atoi(Gates[store].gate1 + 1)].type = 1;
+    matrix[(int)(Gates[store].gate2)[0] - 64][atoi(Gates[store].gate2 + 1)].type = 1;
 }
+/*void special_JW(struct tile **matrix, int x, int y)
+{
+    int flag = 1;
+    char input[10];
+    int xrecord, yrecord;
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            if (strcmp(matrix[i][j].character, "JW") == 0)
+            {
+                yrecord = i;
+                xrecord = j;
+            }
+        }
+    }
+    while (flag == 1)
+    {
+        printf("What is JW's direction?\n N NW NE S SW SE\n");
+        scanf("%s", input);
+        if (strcmp(input, "N") == 0)
+        {
+            flag = 0;
+            for (int i = 1; yrecord - i > 0; i++)
+            {
+                matrix[yrecord - i][xrecord].visibility = 1;
+            }
+        }
+        else if (strcmp(input, "S") == 0)
+        {
+            flag = 0;
+            for (int i = 1; yrecord + i < y + 2; i++)
+            {
+                matrix[yrecord + i][xrecord].visibility = 1;
+            }
+        }
+        else if (strcmp(input, "NE") == 0)
+        {
+            flag = 0;
+            for (int i = 1; yrecord - i > 0 && xrecord + i < x + 2; i++)
+            {
+                matrix[yrecord - i][xrecord + i].visibility = 1;
+            }
+        }
+        else if (strcmp(input, "NW") == 0)
+        {
+            flag = 0;
+            for (int i = 1; yrecord - i > 0 && xrecord - i > 0; i++)
+            {
+                matrix[yrecord - i][xrecord - i].visibility = 1;
+            }
+        }
+        else if (strcmp(input, "SE") == 0)
+        {
+            flag = 0;
+            for (int i = 1; yrecord + i < y + 2 && xrecord + i < x + 2; i++)
+            {
+                matrix[yrecord + i][xrecord + i].visibility = 1;
+            }
+        }
+        else if (strcmp(input, "SW") == 0)
+        {
+            flag = 0;
+            for (int i = 1; yrecord + i < y + 2 && xrecord - i > 0; i++)
+            {
+                matrix[yrecord + i][xrecord - i].visibility = 1;
+            }
+        }
+        else
+        {
+            printf("Wrong input!\n");
+        }
+    }
+}*/
