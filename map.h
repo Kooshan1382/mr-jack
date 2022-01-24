@@ -2,6 +2,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#define ANSI_COLOR_GREEN "\x1B[32m"
+#define ANSI_COLOR_RESET "\x1b[0m"
+#define ANSI_COLOR_YELLOW "\x1B[33m"
+int inocent[8] = {1, 1, 1, 1, 1, 1, 1, 1};
+char CARDS[][10] = {"SH", "JW", "JS", "IL", "MS", "SG", "WG", "JB"};
 
 struct Escape
 {
@@ -90,7 +95,22 @@ void DisplayMap(char *hexagonal, struct tile **map, int x, int y)
             }
             else
             {
-                printf("%s", map[char_count / (2 * 13) + 1][(char_count + 1) % 13 + 1].character);
+                int indicator;
+                for (int k = 0; k < 8; k++)
+                {
+                    if (strcmp(map[char_count / (2 * 13) + 1][(char_count + 1) % 13 + 1].character, CARDS[k]) == 0)
+                    {
+                        indicator = k;
+                    }
+                }
+                if (inocent[indicator] == 0)
+                {
+                    printf(ANSI_COLOR_GREEN     "%s"     ANSI_COLOR_RESET, map[char_count / (2 * 13) + 1][(char_count + 1) % 13 + 1].character);
+                }
+                else{
+                    printf(ANSI_COLOR_YELLOW    "%s"     ANSI_COLOR_RESET, map[char_count / (2 * 13) + 1][(char_count + 1) % 13 + 1].character);
+                }
+                
             }
 
             char_count += 2;
@@ -106,15 +126,15 @@ void DisplayMap(char *hexagonal, struct tile **map, int x, int y)
             {
                 printf("\U0001F3E1");
             }
-             else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 3)
+            else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 3)
             {
                 printf("\U0001F535");
             }
-             else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 4)
+            else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 4)
             {
                 printf("\U0001F534");
             }
-             else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 2)
+            else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 2)
             {
                 printf("\U0001F4A1");
             }
@@ -122,7 +142,7 @@ void DisplayMap(char *hexagonal, struct tile **map, int x, int y)
             {
                 printf("\U0001F311");
             }
-            	
+
             else
             {
                 printf("%d ", map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type);
@@ -146,12 +166,73 @@ struct Escape *Load_Escape(FILE *base)
     }
     return Gates;
 };
-void Clear_Visibility(struct tile **matrix, int x, int y){
+void Clear_Visibility(struct tile **matrix, int x, int y)
+{
     for (int i = 0; i < y + 2; i++)
     {
         for (int j = 0; j < x + 2; j++)
         {
-            matrix[i][j].visibility=0;
+            matrix[i][j].visibility = 0;
+        }
+    }
+}
+void check_Visibility(struct tile **matrix, int x, int y)
+{
+    for (int i = 1; i < y + 1; i++)
+    {
+        for (int j = 1; j < x + 1; j++)
+        {
+            if (matrix[i - 1][j].type == 2 || strcmp(matrix[i - 1][j].character, "NA") != 0)
+            {
+                matrix[i][j].visibility = 1;
+            }
+            if (matrix[i + 1][j].type == 2 || strcmp(matrix[i + 1][j].character, "NA") != 0)
+            {
+                matrix[i][j].visibility = 1;
+            }
+            if (matrix[i][j + 1].type == 2 || strcmp(matrix[i][j + 1].character, "NA") != 0)
+            {
+                matrix[i][j].visibility = 1;
+            }
+            if (matrix[i][j - 1].type == 2 || strcmp(matrix[i][j - 1].character, "NA") != 0)
+            {
+                matrix[i][j].visibility = 1;
+            }
+            if (j % 2 == 0)
+            {
+                if (matrix[i - 1][j + 1].type == 2 || strcmp(matrix[i - 1][j + 1].character, "NA") != 0)
+                {
+                    matrix[i][j].visibility = 1;
+                }
+                if (matrix[i - 1][j - 1].type == 2 || strcmp(matrix[i - 1][j - 1].character, "NA") != 0)
+                {
+                    matrix[i][j].visibility = 1;
+                }
+            }
+            else
+            {
+                if (matrix[i + 1][j + 1].type == 2 || strcmp(matrix[i + 1][j + 1].character, "NA") != 0)
+                {
+                    matrix[i][j].visibility = 1;
+                }
+                if (matrix[i + 1][j - 1].type == 2 || strcmp(matrix[i + 1][j - 1].character, "NA") != 0)
+                {
+                    matrix[i][j].visibility = 1;
+                }
+            }
+        }
+    }
+}
+int if_visible(struct tile **matrix, int x, int y, char mrjack[10])
+{
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            if (strcmp(matrix[i][j].character, mrjack) == 0)
+            {
+                return matrix[i][j].visibility;
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 #include "characters.h"
 
-char CARDS[][10] = {"SH", "JW", "JS", "IL", "MS", "SG", "WG", "JB"};
-void PLAY(char character[10], struct tile **matrix, int x, int y, struct Escape *Gates)
+void PLAY(char character[], struct tile **matrix, int x, int y, struct Escape *Gates, char mrjack[10])
 {
     if (strcmp(character, "JB") == 0)
     {
@@ -33,7 +32,7 @@ void PLAY(char character[10], struct tile **matrix, int x, int y, struct Escape 
     }
     if (strcmp(character, "SH") == 0)
     {
-        //SH(matrix, x, y);
+        SH(matrix, x, y, mrjack);
     }
 }
 struct Deck
@@ -90,6 +89,7 @@ struct seperate_Deck *card_generator()
 }
 int main()
 {
+
     FILE *map;
     FILE *base;
     map = fopen("map.txt", "a+");
@@ -110,6 +110,7 @@ int main()
     DisplayMap(hexagonal, matrix, x, y);
     struct Escape *Gates = Load_Escape(base);
     char character[10];
+    Clear_Visibility(matrix, x, y);
     for (int i = 0; i < 16 && win_status == 0; i++)
     {
         if (i % 2 == 0)
@@ -158,9 +159,13 @@ int main()
                     if (strcmp(current->card, character) == 0 && strcmp(current->card, "\0") != 0)
                     {
                         strcpy(current->card, "\0");
-                        PLAY(character, matrix, x, y, Gates);
-                        system("cls");
+                        PLAY(character, matrix, x, y, Gates, mrjack);
+                        check_Visibility(matrix, x, y);
+                        printf("status is %d\n",if_visible(matrix,x,y,mrjack));
+                        inocent_List(matrix, x, y, mrjack);
+                        //system("cls");
                         DisplayMap(hexagonal, matrix, x, y);
+                        
                         flag = 1;
                     }
                     current = current->next;
