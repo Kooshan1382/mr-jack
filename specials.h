@@ -221,6 +221,70 @@ void special_IL(struct tile **matrix, int x, int y, struct Escape *Gates)
     matrix[(int)(Gates[store].gate1)[0] - 64][atoi(Gates[store].gate1 + 1)].type = 1;
     matrix[(int)(Gates[store].gate2)[0] - 64][atoi(Gates[store].gate2 + 1)].type = 1;
 }
+void make_visible(struct tile **matrix, int xrecord, int yrecord, int x, int y, char input[])
+{
+    if (xrecord == 0 || xrecord == x + 1 || yrecord == 0 || yrecord == y + 1)
+    {
+    }
+    else
+    {
+
+        if (strcmp(input, "N") == 0)
+        {
+            strcpy(JW_direction, "N");
+            make_visible(matrix,xrecord,yrecord-1,x,y,"N");
+        }
+        else if (strcmp(input, "S") == 0)
+        {
+            strcpy(JW_direction, "S");
+            make_visible(matrix,xrecord,yrecord+1,x,y,"S");
+        }
+        else if (strcmp(input, "NE") == 0)
+        {
+            strcpy(JW_direction, "NE");
+            if (xrecord % 2 == 0)
+            {
+                make_visible(matrix,xrecord+1,yrecord-1,x,y,"NE");
+            }
+            else{
+                make_visible(matrix,xrecord+1,yrecord,x,y,"NE");
+            }
+        }
+        else if (strcmp(input, "NW") == 0)
+        {
+            strcpy(JW_direction, "NW");
+            if (xrecord % 2 == 0)
+            {
+                make_visible(matrix,xrecord-1,yrecord-1,x,y,"NW");
+            }
+            else{
+                make_visible(matrix,xrecord-1,yrecord,x,y,"NW");
+            }
+        }
+        else if (strcmp(input, "SE") == 0)
+        {
+            strcpy(JW_direction, "SE");
+            if (xrecord % 2 == 0)
+            {
+                make_visible(matrix,xrecord+1,yrecord,x,y,"SE");
+            }
+            else{
+                make_visible(matrix,xrecord+1,yrecord+1,x,y,"SE");
+            }
+        }
+        else if (strcmp(input, "SW") == 0)
+        {
+            strcpy(JW_direction, "SW");
+            if (xrecord % 2 == 0)
+            {
+                make_visible(matrix,xrecord-1,yrecord,x,y,"SW");
+            }
+            else{
+                make_visible(matrix,xrecord-1,yrecord+1,x,y,"SW");
+            }
+        }
+    }
+}
 void special_JW(struct tile **matrix, int x, int y)
 {
     int flag = 1;
@@ -241,58 +305,10 @@ void special_JW(struct tile **matrix, int x, int y)
     {
         printf("What is JW's direction?\n N NW NE S SW SE\n");
         scanf("%s", input);
-        if (strcmp(input, "N") == 0)
+        if (strcmp(input, "N") == 0 || strcmp(input, "NE") == 0 || strcmp(input, "NW") == 0 || strcmp(input, "S") == 0 || strcmp(input, "SW") == 0 || strcmp(input, "SE") == 0)
         {
             flag = 0;
-            for (int i = 1; yrecord - i > 0; i++)
-            {
-                matrix[yrecord - i][xrecord].visibility = 1;
-            }
-            strcpy(JW_direction,"N");
-        }
-        else if (strcmp(input, "S") == 0)
-        {
-            flag = 0;
-            for (int i = 1; yrecord + i < y + 2; i++)
-            {
-                matrix[yrecord + i][xrecord].visibility = 1;
-            }
-            strcpy(JW_direction,"S");
-        }
-        else if (strcmp(input, "NE") == 0)
-        {
-            flag = 0;
-            if(xrecord%2==0){
-                
-            }
-            for (int i = 1; yrecord - i > 0 && xrecord + i < x + 2; i++)
-            {
-                matrix[yrecord - i][xrecord + i].visibility = 1;
-            }
-        }
-        else if (strcmp(input, "NW") == 0)
-        {
-            flag = 0;
-            for (int i = 1; yrecord - i > 0 && xrecord - i > 0; i++)
-            {
-                matrix[yrecord - i][xrecord - i].visibility = 1;
-            }
-        }
-        else if (strcmp(input, "SE") == 0)
-        {
-            flag = 0;
-            for (int i = 1; yrecord + i < y + 2 && xrecord + i < x + 2; i++)
-            {
-                matrix[yrecord + i][xrecord + i].visibility = 1;
-            }
-        }
-        else if (strcmp(input, "SW") == 0)
-        {
-            flag = 0;
-            for (int i = 1; yrecord + i < y + 2 && xrecord - i > 0; i++)
-            {
-                matrix[yrecord + i][xrecord - i].visibility = 1;
-            }
+            make_visible(matrix,xrecord,yrecord,x,y,input);
         }
         else
         {

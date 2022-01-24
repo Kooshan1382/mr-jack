@@ -28,7 +28,7 @@ void PLAY(char character[], struct tile **matrix, int x, int y, struct Escape *G
     }
     if (strcmp(character, "JW") == 0)
     {
-        //JW(matrix, x, y);
+        JW(matrix, x, y);
     }
     if (strcmp(character, "SH") == 0)
     {
