@@ -46,6 +46,9 @@ void WG(struct tile **matrix, int x, int y)
         move_player("WG", matrix, x, y);
     }
 }
+void MS(struct tile **matrix, int x, int y){
+    move_player("MS", matrix, x, y);
+}
 void IL(struct tile **matrix, int x, int y,struct Escape * Gates)
 {
     printf("\nwhich to do first special or move? \n");
@@ -64,5 +67,5 @@ void IL(struct tile **matrix, int x, int y,struct Escape * Gates)
 }
 void JW (struct tile **matrix, int x, int y){
     move_player("JW", matrix, x, y);
-    
+    special_JW(matrix,x,y);
 }

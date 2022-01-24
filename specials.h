@@ -221,7 +221,7 @@ void special_IL(struct tile **matrix, int x, int y, struct Escape *Gates)
     matrix[(int)(Gates[store].gate1)[0] - 64][atoi(Gates[store].gate1 + 1)].type = 1;
     matrix[(int)(Gates[store].gate2)[0] - 64][atoi(Gates[store].gate2 + 1)].type = 1;
 }
-/*void special_JW(struct tile **matrix, int x, int y)
+void special_JW(struct tile **matrix, int x, int y)
 {
     int flag = 1;
     char input[10];
@@ -248,6 +248,7 @@ void special_IL(struct tile **matrix, int x, int y, struct Escape *Gates)
             {
                 matrix[yrecord - i][xrecord].visibility = 1;
             }
+            strcpy(JW_direction,"N");
         }
         else if (strcmp(input, "S") == 0)
         {
@@ -256,10 +257,14 @@ void special_IL(struct tile **matrix, int x, int y, struct Escape *Gates)
             {
                 matrix[yrecord + i][xrecord].visibility = 1;
             }
+            strcpy(JW_direction,"S");
         }
         else if (strcmp(input, "NE") == 0)
         {
             flag = 0;
+            if(xrecord%2==0){
+                
+            }
             for (int i = 1; yrecord - i > 0 && xrecord + i < x + 2; i++)
             {
                 matrix[yrecord - i][xrecord + i].visibility = 1;
@@ -294,4 +299,4 @@ void special_IL(struct tile **matrix, int x, int y, struct Escape *Gates)
             printf("Wrong input!\n");
         }
     }
-}*/
+}

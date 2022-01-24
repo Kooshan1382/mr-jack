@@ -73,20 +73,7 @@ struct tile **LoadMap(FILE *base, int x, int y)
             }
         }
     }
-    for (int i = 0; i < y + 2; i++)
-    {
-        for (int j = 0; j < x + 2; j++)
-        {
-            if (i == 0 || i == y + 1 || j == 0 || j == x + 1)
-            {
-                matrix[i][j].visibility = 0;
-            }
-            else
-            {
-                fscanf(base, "%d", &matrix[i][j].visibility);
-            }
-        }
-    }
+
     return matrix;
 }
 void DisplayMap(char *hexagonal, struct tile **map, int x, int y)
@@ -117,8 +104,25 @@ void DisplayMap(char *hexagonal, struct tile **map, int x, int y)
             }
             else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 0)
             {
-                printf("##");
+                printf("\U0001F3E1");
             }
+             else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 3)
+            {
+                printf("\U0001F535");
+            }
+             else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 4)
+            {
+                printf("\U0001F534");
+            }
+             else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 2)
+            {
+                printf("\U0001F4A1");
+            }
+            else if (map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type == 5)
+            {
+                printf("\U0001F311");
+            }
+            	
             else
             {
                 printf("%d ", map[type_count / (2 * 13) + 1][(type_count + 1) % 13 + 1].type);
@@ -142,3 +146,12 @@ struct Escape *Load_Escape(FILE *base)
     }
     return Gates;
 };
+void Clear_Visibility(struct tile **matrix, int x, int y){
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            matrix[i][j].visibility=0;
+        }
+    }
+}
