@@ -136,3 +136,29 @@ void SG(struct tile **matrix, int x, int y)
         move_player("SG", matrix, x, y);
     }
 }
+void Description(char name[]){
+    if(strcmp(name,"SH")==0){
+        printf("1) Move 1 to 3 blocks 2) Seas a card from pile of supspects\n");
+    }
+    if(strcmp(name,"JW")==0){
+        printf("1) Move 1 to 3 blocks 2) Light a direction\n");
+    }
+    if(strcmp(name,"JS")==0){
+        printf("1) Move 1 to 3 blocks 2) Turn on one light and turn off another one\n");
+    }
+    if(strcmp(name,"IL")==0){
+        printf("1) Move 1 to 3 blocks 2) Open a gate and block another one \n");
+    }
+    if(strcmp(name,"MS")==0){
+        printf("1) Move 1 to 4 blocks while it can move into the buildings\n");
+    }
+    if(strcmp(name,"SG")==0){
+        printf("1) Move 1 to 3 blocks 2) Whistle and bring other characters closer 3 times \n");
+    }
+    if(strcmp(name,"WG")==0){
+        printf("1) Move 1 to 3 blocks 2) Change place with another character \n");
+    }
+    if(strcmp(name,"JB")==0){
+        printf("1) Move 1 to 3 blocks 2) Open a well and block another one \n");
+    }
+}

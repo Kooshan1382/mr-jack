@@ -221,7 +221,7 @@ void special_IL(struct tile **matrix, int x, int y, struct Escape *Gates)
     matrix[(int)(Gates[store].gate1)[0] - 64][atoi(Gates[store].gate1 + 1)].type = 1;
     matrix[(int)(Gates[store].gate2)[0] - 64][atoi(Gates[store].gate2 + 1)].type = 1;
 }
-void make_visible(struct tile **matrix, int xrecord, int yrecord, int x, int y, char input[x])
+void make_visible(struct tile **matrix, int xrecord, int yrecord, int x, int y, char input[])
 {
     if (xrecord == 0 || xrecord == x + 1 || yrecord == 0 || yrecord == y + 1)
     {

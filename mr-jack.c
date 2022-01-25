@@ -1,5 +1,91 @@
 #include "characters.h"
+void Load(struct tile **matrix, int *xread, int *yread, char mrjack[], struct Escape *Gates)
+{
+    FILE *save;
+    save = fopen("save.txt", "a+b");
+    fread(xread, sizeof(int), 1, save);
+    fread(yread, sizeof(int), 1, save);
+    int x = *xread;
+    int y = *yread;
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            fread(&matrix[i][j].type, sizeof(int), 1, save);
+        }
+    }
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            fread(&matrix[i][j].character, sizeof(char), 3, save);
+        }
+    }
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            fread(&matrix[i][j].visibility, sizeof(int), 1, save);
+        }
+    }
+    fread(mrjack, sizeof(char), 3, save);
+    for (int i = 0; i < 4; i++)
+    {
+        fread(&Gates[i].place, sizeof(char), 3, save);
+        fread(&Gates[i].mode, sizeof(int), 1, save);
+        fread(&Gates[i].gate1, sizeof(char), 4, save);
+        fread(&Gates[i].gate2, sizeof(char), 4, save);
+    }
+    fwrite(JW_direction, sizeof(char), 3, save);
+    for (int i = 0; i < 8; i++)
+    {
+        fread(&inocent[i], sizeof(int), 1, save);
+    }
+    fclose(save);
+}
+void save(int x, int y, struct tile **matrix, char mrjack[], struct Escape *Gates)
+{
+    FILE *save;
+    save = fopen("save.txt", "w+b");
+    fwrite(&x, sizeof(int), 1, save);
+    fwrite(&y, sizeof(int), 1, save);
 
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            fwrite(&matrix[i][j].type, sizeof(int), 1, save);
+        }
+    }
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            fwrite(&matrix[i][j].character, sizeof(char), 3, save);
+        }
+    }
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            fwrite(&matrix[i][j].visibility, sizeof(int), 1, save);
+        }
+    }
+    fwrite(mrjack, sizeof(char), 3, save);
+    for (int i = 0; i < 4; i++)
+    {
+        fwrite(&(Gates[i].place), sizeof(char), 3, save);
+        fwrite(&(Gates[i].mode), sizeof(int), 1, save);
+        fwrite(&(Gates[i].gate1), sizeof(char), 4, save);
+        fwrite(&(Gates[i].gate2), sizeof(char), 4, save);
+    }
+    fwrite(JW_direction, sizeof(char), 3, save);
+    for (int i = 0; i < 8; i++)
+    {
+        fwrite(&inocent[i], sizeof(int), 1, save);
+    }
+    fclose(save);
+}
 void PLAY(char character[], struct tile **matrix, int x, int y, struct Escape *Gates, char mrjack[10])
 {
     if (strcmp(character, "JB") == 0)
@@ -12,7 +98,7 @@ void PLAY(char character[], struct tile **matrix, int x, int y, struct Escape *G
     }
     if (strcmp(character, "SG") == 0)
     {
-        SG(matrix,x,y);
+        SG(matrix, x, y);
     }
     if (strcmp(character, "MS") == 0)
     {
@@ -84,12 +170,11 @@ struct seperate_Deck *card_generator()
     head->next = (struct Deck *)malloc(sizeof(struct Deck));
     head = head->next;
     head->next = NULL;
-
     return Deck;
 }
 int main()
 {
-
+    int turn = 0; //0 for detective and 1 for mr-jack
     FILE *map;
     FILE *base;
     map = fopen("map.txt", "a+");
@@ -106,18 +191,23 @@ int main()
     random = random % 8;
     char mrjack[10];
     strcpy(mrjack, CARDS[random]);
+    struct Escape *Gates = Load_Escape(base);
+    Load(matrix,&x,&y,mrjack,Gates);
     printf("Mr Jack is : %s\n", mrjack);
     DisplayMap(hexagonal, matrix, x, y);
-    struct Escape *Gates = Load_Escape(base);
+
     char character[10];
     Clear_Visibility(matrix, x, y);
-    for (int i = 0; i < 16 && win_status == 0; i++)
+    save(x, y, matrix, mrjack, Gates);
+
+    for (int i = 0; i < 8 && win_status == 0; i++)
     {
+        Clear_Visibility(matrix, x, y);
         if (i % 2 == 0)
         {
             Playable = card_generator();
         }
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < 4 && win_status == 0; j++)
         {
 
             int flag = 0;
@@ -125,19 +215,44 @@ int main()
             {
                 if (i % 2 == 0)
                 {
-
                     current = Playable->head1;
+                    if (j == 3 || j == 0)
+                    {
+                        turn = 0;
+                    }
+                    else
+                    {
+                        turn = 1;
+                    }
                 }
                 else
                 {
+
                     current = Playable->head2;
+                    if (j == 3 || j == 0)
+                    {
+                        turn = 1;
+                    }
+                    else
+                    {
+                        turn = 0;
+                    }
                 }
-                printf("playable cards are : ");
+                if (turn == 0)
+                {
+                    printf("Detective's turn\n");
+                }
+                else
+                {
+                    printf("Mr Jack's turn\n");
+                }
+                printf("playable cards are : \n");
                 while (current->next != NULL)
                 {
                     if (strcmp(current->card, "\0") != 0)
                     {
                         printf("%s ", current->card);
+                        Description(current->card);
                     }
                     current = current->next;
                 }
@@ -160,11 +275,10 @@ int main()
                     {
                         strcpy(current->card, "\0");
                         PLAY(character, matrix, x, y, Gates, mrjack);
-                        check_Visibility(matrix, x, y);
-                        inocent_List(matrix, x, y, mrjack);
+                        save(x, y, matrix, mrjack, Gates);
                         //system("cls");
                         DisplayMap(hexagonal, matrix, x, y);
-                        
+
                         flag = 1;
                     }
                     current = current->next;
@@ -174,9 +288,57 @@ int main()
                     printf("wrong character!");
                 }
             }
+            for (int m = 0; m < 4; m++)
+            {
+                printf("%s %s\n", Gates[m].gate1, Gates[m].gate2);
+                int ycheck, xcheck;
+                ycheck = (int)(Gates[m].gate1[0]) - 64;
+                xcheck = atoi(Gates[m].gate1 + 1);
+                for (int l = 0; l < y + 2; l++)
+                {
+                    for (int p = 0; p < x + 2; p++)
+                    {
+                        if (strcmp(matrix[l][p].character, mrjack) == 0)
+                        {
+                            if (ycheck == l && xcheck == p)
+                            {
+                                printf("MR JACK WON!\n");
+                                win_status = 1;
+                            }
+                        }
+                    }
+                }
+                ycheck = (int)(Gates[m].gate2[0]) - 64;
+                xcheck = atoi(Gates[m].gate2 + 1);
+                for (int l = 0; l < y + 2; l++)
+                {
+                    for (int p = 0; p < x + 2; p++)
+                    {
+                        if (strcmp(matrix[l][p].character, mrjack) == 0)
+                        {
+                            if (ycheck == l && xcheck == p)
+                            {
+                                printf("MR JACK WON!\n");
+                                win_status = 1;
+                            }
+                        }
+                    }
+                }
+            }
         }
+        for (int l = 0; l < y + 2; l++)
+        {
+            for (int p = 0; p < x + 2; p++)
+            {
+                if (strcmp(matrix[l][p].character, "JW") == 0)
+                {
+                    make_visible(matrix, l, p, x, y, JW_direction);
+                }
+            }
+        }
+        check_Visibility(matrix, x, y);
+        inocent_List(matrix, x, y, mrjack);
     }
-
     fclose(map);
-    fclose(base); 
+    fclose(base);
 }
