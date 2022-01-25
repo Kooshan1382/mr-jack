@@ -354,12 +354,19 @@ void special_SG(struct tile **matrix, int x, int y)
             }
             if (flag == 0)
             {
-                printf("how many moves would you like to move? ");
-                scanf("%d", &move_counter);
-                for(int k=0;k<move_counter;k++){
-                    move_player_SG(input,matrix,x,y,move_counter,xrecord,yrecord);
+
+                int flag_movement = 1;
+                while (flag_movement == 1)
+                {
+                    printf("how many moves would you like to move? ");
+                    scanf("%d", &move_counter);
+                    if (i + move_counter - 1 <= 3)
+                    {
+                        i = i + move_counter - 1;
+                        flag_movement = 0;
+                    }
                 }
-                i = i + move_counter - 1;
+                move_player_SG(input, matrix, x, y, move_counter, xrecord, yrecord);
             }
             else
             {

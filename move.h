@@ -1,4 +1,5 @@
 #include "map.h"
+
 struct position
 {
     char y;
@@ -342,7 +343,10 @@ void move_player(char name[], struct tile **matrix, int x, int y)
             printf("possible step(s) are : ");
             while (current->next != NULL)
             {
-                printf("%c%d ", current->y, current->x);
+                if(current->y>='A' && current->y<='I' && current->x>=1 && current->x<=x){
+                    printf("%c%d ", current->y, current->x);
+                }
+                
                 current = current->next;
             }
             printf("\nwhere would you like to go? ");

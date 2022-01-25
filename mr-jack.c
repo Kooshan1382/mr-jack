@@ -1,4 +1,44 @@
 #include "characters.h"
+int rounds = 0;
+void Replay_save(int x, int y, struct tile **matrix, char mrjack[], struct Escape *Gates, FILE *save)
+{
+
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            fprintf(save, "%d ", matrix[i][j].type);
+        }
+        fprintf(save, "\n");
+    }
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            fprintf(save, "%s ", matrix[i][j].character);
+        }
+        fprintf(save, "\n");
+    }
+}
+void Replay_play(FILE *base, int x, int y, struct tile **matrix)
+{
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            fscanf(base, "%d", &matrix[i][j].type);
+        }
+    }
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            char name[10];
+            fscanf(base, "%s", name);
+            strcpy(matrix[i][j].character, name);
+        }
+    }
+}
 void Load(struct tile **matrix, int *xread, int *yread, char mrjack[], struct Escape *Gates)
 {
     FILE *save;
@@ -41,8 +81,13 @@ void Load(struct tile **matrix, int *xread, int *yread, char mrjack[], struct Es
     {
         fread(&inocent[i], sizeof(int), 1, save);
     }
+    for (int i = 0; i < 8; i++)
+    {
+        fwrite(&CARDS_for_SH[i], sizeof(char), 3, save);
+    }
     fclose(save);
 }
+
 void save(int x, int y, struct tile **matrix, char mrjack[], struct Escape *Gates)
 {
     FILE *save;
@@ -83,6 +128,10 @@ void save(int x, int y, struct tile **matrix, char mrjack[], struct Escape *Gate
     for (int i = 0; i < 8; i++)
     {
         fwrite(&inocent[i], sizeof(int), 1, save);
+    }
+    for (int i = 0; i < 8; i++)
+    {
+        fwrite(&CARDS_for_SH[i], sizeof(char), 3, save);
     }
     fclose(save);
 }
@@ -212,13 +261,11 @@ struct Deck
     char card[10];
     struct Deck *next;
 };
-
 struct seperate_Deck
 {
     struct Deck *head1;
     struct Deck *head2;
 };
-
 struct seperate_Deck *card_generator()
 {
     struct seperate_Deck *Deck;
@@ -263,6 +310,8 @@ int main()
     int turn = 0; //0 for detective and 1 for mr-jack
     FILE *map;
     FILE *base;
+    FILE *replay;
+    replay = fopen("replay.txt", "w+");
     map = fopen("map.txt", "a+");
     base = fopen("base.txt", "a+");
     int x, y;
@@ -288,7 +337,6 @@ int main()
         Load(matrix, &x, &y, mrjack, Gates);
     }
     printf("Mr Jack is : %s\n", mrjack);
-    DisplayMap(hexagonal, matrix, x, y);
 
     char character[10];
 
@@ -305,12 +353,16 @@ int main()
                 if (strcmp(choice, "yes") == 0)
                 {
                     save(x, y, matrix, mrjack, Gates);
+                    win_status = 1;
                 }
             }
             Playable = card_generator();
         }
         for (int j = 0; j < 4 && win_status == 0; j++)
         {
+            Replay_save(x, y, matrix, mrjack, Gates, replay);
+            DisplayMap(hexagonal, matrix, x, y);
+            rounds++;
             int flag = 0;
             while (flag == 0)
             {
@@ -394,30 +446,33 @@ int main()
                                     }
                                     printf("\n");
                                     printf("Input None if you dont want to arrest anybody\n");
-                                    scanf("%s",arrest);
-                                    if(strcmp(arrest,"None")){
-                                        flag=0;
+                                    scanf("%s", arrest);
+                                    if (strcmp(arrest, "None"))
+                                    {
+                                        flag_print = 0;
                                     }
                                     head_suspect = check_arrest(character, matrix, x, y);
-                                    while(head_suspect->next!=NULL){
-                                        if(strcmp(head_suspect->character,arrest)==0){
-                                            flag_print=0;
-                                            win_status=1;
-                                            if(strcmp(arrest,mrjack)==0){
+                                    while (head_suspect->next != NULL)
+                                    {
+                                        if (strcmp(head_suspect->character, arrest) == 0)
+                                        {
+                                            flag_print = 0;
+                                            win_status = 1;
+                                            if (strcmp(arrest, mrjack) == 0)
+                                            {
                                                 printf("Detective Won!\n");
                                             }
-                                            else{
+                                            else
+                                            {
                                                 printf("MR JACK WON!\n");
                                             }
-                                            
                                         }
-                                        head_suspect=head_suspect->next;
+                                        head_suspect = head_suspect->next;
                                     }
                                 }
                             }
                         }
                         //system("cls");
-                        DisplayMap(hexagonal, matrix, x, y);
                         flag = 1;
                     }
                     current = current->next;
@@ -478,6 +533,29 @@ int main()
         check_Visibility(matrix, x, y);
         inocent_List(matrix, x, y, mrjack);
     }
+    Replay_save(x, y, matrix, mrjack, Gates, replay);
+    fclose(replay);
+    rounds++;
+    replay = fopen("replay.txt", "a+");
+    printf("Do you want Replay? 1 for yes and 0 for no : ");
+    int rep;
+    scanf("%d", &rep);
+    if (rep == 1)
+    {
+        printf("Playing Replay\n");
+        for (int k = 0; k < 8; k++)
+        {
+            inocent[k] = 1;
+        }
+        for (int i = 0; i < rounds; i++)
+        {
+            Replay_play(replay, x, y, matrix);
+            DisplayMap(hexagonal, matrix, x, y);
+            Sleep(1000);
+        }
+    }
+
     fclose(map);
     fclose(base);
+    fclose(replay);
 }

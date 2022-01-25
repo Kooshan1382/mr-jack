@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <windows.h>
+
 #define ANSI_COLOR_GREEN "\x1B[32m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 #define ANSI_COLOR_YELLOW "\x1B[33m"
