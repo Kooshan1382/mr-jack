@@ -121,6 +121,92 @@ void PLAY(char character[], struct tile **matrix, int x, int y, struct Escape *G
         SH(matrix, x, y, mrjack);
     }
 }
+struct Suspect
+{
+    char character[10];
+    struct Suspect *next;
+};
+struct Suspect *check_arrest(char character[], struct tile **matrix, int x, int y)
+{
+    int xrecord, yrecord;
+    for (int i = 0; i < y + 2; i++)
+    {
+        for (int j = 0; j < x + 2; j++)
+        {
+            if (strcmp(character, matrix[i][j].character) == 0)
+            {
+                yrecord = i;
+                xrecord = j;
+            }
+        }
+    }
+    struct Suspect *head, *current;
+    head = current = (struct Suspect *)malloc(sizeof(struct Suspect));
+    current->next = NULL;
+    if (strcmp(matrix[yrecord][xrecord + 1].character, "NA") != 0)
+    {
+        strcpy(current->character, matrix[yrecord][xrecord + 1].character);
+        current->next = (struct Suspect *)malloc(sizeof(struct Suspect));
+        current = current->next;
+        current->next = NULL;
+    }
+    if (strcmp(matrix[yrecord][xrecord - 1].character, "NA") != 0)
+    {
+        strcpy(current->character, matrix[yrecord][xrecord - 1].character);
+        current->next = (struct Suspect *)malloc(sizeof(struct Suspect));
+        current = current->next;
+        current->next = NULL;
+    }
+    if (strcmp(matrix[yrecord - 1][xrecord].character, "NA") != 0)
+    {
+        strcpy(current->character, matrix[yrecord - 1][xrecord].character);
+        current->next = (struct Suspect *)malloc(sizeof(struct Suspect));
+        current = current->next;
+        current->next = NULL;
+    }
+    if (strcmp(matrix[yrecord + 1][xrecord].character, "NA") != 0)
+    {
+        strcpy(current->character, matrix[yrecord + 1][xrecord].character);
+        current->next = (struct Suspect *)malloc(sizeof(struct Suspect));
+        current = current->next;
+        current->next = NULL;
+    }
+    if (x % 2 == 0)
+    {
+        if (strcmp(matrix[yrecord - 1][xrecord + 1].character, "NA") != 0)
+        {
+            strcpy(current->character, matrix[yrecord - 1][xrecord + 1].character);
+            current->next = (struct Suspect *)malloc(sizeof(struct Suspect));
+            current = current->next;
+            current->next = NULL;
+        }
+        if (strcmp(matrix[yrecord - 1][xrecord - 1].character, "NA") != 0)
+        {
+            strcpy(current->character, matrix[yrecord - 1][xrecord - 1].character);
+            current->next = (struct Suspect *)malloc(sizeof(struct Suspect));
+            current = current->next;
+            current->next = NULL;
+        }
+    }
+    else
+    {
+        if (strcmp(matrix[yrecord + 1][xrecord + 1].character, "NA") != 0)
+        {
+            strcpy(current->character, matrix[yrecord + 1][xrecord + 1].character);
+            current->next = (struct Suspect *)malloc(sizeof(struct Suspect));
+            current = current->next;
+            current->next = NULL;
+        }
+        if (strcmp(matrix[yrecord + 1][xrecord - 1].character, "NA") != 0)
+        {
+            strcpy(current->character, matrix[yrecord + 1][xrecord - 1].character);
+            current->next = (struct Suspect *)malloc(sizeof(struct Suspect));
+            current = current->next;
+            current->next = NULL;
+        }
+    }
+    return head;
+}
 struct Deck
 {
     char card[10];
@@ -192,24 +278,39 @@ int main()
     char mrjack[10];
     strcpy(mrjack, CARDS[random]);
     struct Escape *Gates = Load_Escape(base);
-    Load(matrix,&x,&y,mrjack,Gates);
+
+    printf("would you like to play new game or load ? ");
+
+    char choice[10];
+    scanf("%s", choice);
+    if (strcmp(choice, "Load") == 0)
+    {
+        Load(matrix, &x, &y, mrjack, Gates);
+    }
     printf("Mr Jack is : %s\n", mrjack);
     DisplayMap(hexagonal, matrix, x, y);
 
     char character[10];
-    Clear_Visibility(matrix, x, y);
-    save(x, y, matrix, mrjack, Gates);
 
-    for (int i = 0; i < 8 && win_status == 0; i++)
+    for (int i = 0; i < 16 && win_status == 0; i++)
     {
         Clear_Visibility(matrix, x, y);
         if (i % 2 == 0)
         {
+            if (i != 0)
+            {
+                printf("would you like to save?\n");
+                char choice[10];
+                scanf("%s", choice);
+                if (strcmp(choice, "yes") == 0)
+                {
+                    save(x, y, matrix, mrjack, Gates);
+                }
+            }
             Playable = card_generator();
         }
         for (int j = 0; j < 4 && win_status == 0; j++)
         {
-
             int flag = 0;
             while (flag == 0)
             {
@@ -275,10 +376,48 @@ int main()
                     {
                         strcpy(current->card, "\0");
                         PLAY(character, matrix, x, y, Gates, mrjack);
-                        save(x, y, matrix, mrjack, Gates);
+                        if (turn == 0)
+                        {
+                            struct Suspect *head_suspect;
+                            head_suspect = check_arrest(character, matrix, x, y);
+                            if (head_suspect->next != NULL)
+                            {
+                                int flag_print = 1;
+                                char arrest[10];
+                                while (flag_print == 1)
+                                {
+                                    printf("You Can Arrest : ");
+                                    while (head_suspect->next != NULL)
+                                    {
+                                        printf("%s ", head_suspect->character);
+                                        head_suspect = head_suspect->next;
+                                    }
+                                    printf("\n");
+                                    printf("Input None if you dont want to arrest anybody\n");
+                                    scanf("%s",arrest);
+                                    if(strcmp(arrest,"None")){
+                                        flag=0;
+                                    }
+                                    head_suspect = check_arrest(character, matrix, x, y);
+                                    while(head_suspect->next!=NULL){
+                                        if(strcmp(head_suspect->character,arrest)==0){
+                                            flag_print=0;
+                                            win_status=1;
+                                            if(strcmp(arrest,mrjack)==0){
+                                                printf("Detective Won!\n");
+                                            }
+                                            else{
+                                                printf("MR JACK WON!\n");
+                                            }
+                                            
+                                        }
+                                        head_suspect=head_suspect->next;
+                                    }
+                                }
+                            }
+                        }
                         //system("cls");
                         DisplayMap(hexagonal, matrix, x, y);
-
                         flag = 1;
                     }
                     current = current->next;
@@ -290,7 +429,6 @@ int main()
             }
             for (int m = 0; m < 4; m++)
             {
-                printf("%s %s\n", Gates[m].gate1, Gates[m].gate2);
                 int ycheck, xcheck;
                 ycheck = (int)(Gates[m].gate1[0]) - 64;
                 xcheck = atoi(Gates[m].gate1 + 1);
@@ -326,6 +464,7 @@ int main()
                 }
             }
         }
+
         for (int l = 0; l < y + 2; l++)
         {
             for (int p = 0; p < x + 2; p++)
