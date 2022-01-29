@@ -347,7 +347,7 @@ int main()
         {
             if (i != 0)
             {
-                printf("would you like to save?\n");
+                printf("would you like to save? (yes for saving and no for not saving)\n");
                 char choice[10];
                 scanf("%s", choice);
                 if (strcmp(choice, "yes") == 0)
@@ -532,6 +532,10 @@ int main()
         }
         check_Visibility(matrix, x, y);
         inocent_List(matrix, x, y, mrjack);
+    }
+    if (win_status == 0)
+    {
+        printf("MR JACK WON!\n");
     }
     Replay_save(x, y, matrix, mrjack, Gates, replay);
     fclose(replay);
